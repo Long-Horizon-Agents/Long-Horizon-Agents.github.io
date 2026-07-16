@@ -46,6 +46,8 @@
   h1,h2,h3,.sec-title,.title{font-family:"Sora","Inter",sans-serif}
   .skip-link{position:fixed;left:16px;top:12px;z-index:999;transform:translateY(-150%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:9px;font-weight:700;transition:transform .15s}
   .skip-link:focus{transform:none;text-decoration:none}
+  .cursor-comet{position:fixed;inset:0;z-index:90;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .22s ease;mix-blend-mode:multiply}
+  .cursor-comet.visible{opacity:1}
 
   /* ---------- NAV ---------- */
   nav{
@@ -101,14 +103,6 @@
   .hero-inner>*:nth-child(7){animation-delay:.54s}
   .hero-inner>*:nth-child(8){animation-delay:.61s}
   @keyframes rise{to{opacity:1;transform:none}}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:12px;letter-spacing:.12em;
-    text-transform:uppercase;color:var(--brand);background:rgba(255,255,255,.7);
-    padding:7px 16px;border-radius:999px;border:1px solid var(--line);margin-bottom:26px;
-    box-shadow:var(--shadow-sm);backdrop-filter:blur(8px);
-  }
-  .eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 0 rgba(47,95,224,.5);animation:pulse 2s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(47,95,224,.5)}70%{box-shadow:0 0 0 9px rgba(47,95,224,0)}100%{box-shadow:0 0 0 0 rgba(47,95,224,0)}}
   h1.title{
     font-size:clamp(38px,6.6vw,76px);line-height:1.02;font-weight:800;letter-spacing:-.035em;
     margin:0 auto 20px;max-width:15ch;color:var(--ink);
@@ -279,7 +273,6 @@
     .nav-in{padding:10px 18px}
     .nav-brand{font-size:14px;gap:8px}
     header.hero{padding:72px 0 56px}
-    .eyebrow{margin-bottom:20px}
     h1.title{font-size:clamp(36px,12vw,52px)}
     .subtitle{margin-bottom:24px}
     .authors{font-size:13.5px;line-height:1.75}
@@ -309,11 +302,14 @@
     .hero .blob,.hero-aurora{animation:none}
     h1.title .g{animation:none}
     .hero-inner>*{opacity:1;transform:none;animation:none}
+    .cursor-comet{display:none}
   }
+  @media (hover:none),(pointer:coarse){.cursor-comet{display:none}}
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Skip to content</a>
+<canvas class="cursor-comet" aria-hidden="true"></canvas>
 
 <!-- NAV -->
 <nav aria-label="Primary navigation">
@@ -338,7 +334,6 @@
   <div class="hero-aurora"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <div class="wrap hero-inner">
-    <span class="eyebrow"><span class="pulse"></span> Survey · 2026</span>
     <h1 class="title">Towards <span class="g">Long-Horizon</span> AI Agents</h1>
     <p class="subtitle">Foundation, Evolution, Harness, Optimization, Application, and Frontier</p>
     <p class="authors">
@@ -413,8 +408,8 @@
     <div class="cards">
       <div class="card reveal"><div class="no">01</div><h4>Formalization</h4><p>We formalize long-horizon agency as a harness-coupled decision process and distinguish it from long-running execution, autonomy, and self-evolution.</p></div>
       <div class="card reveal"><div class="no">02</div><h4>Evolution</h4><p>We trace the field from prompt-level control to runtime agent systems through three nested, chronologically coherent stages.</p></div>
-      <div class="card reveal"><div class="no">03</div><h4>Two Pillars</h4><p>We classify existing work through the complementary lenses of externalized harnesses and internalized optimization.</p></div>
-      <div class="card reveal"><div class="no">04</div><h4>Apps &amp; Frontiers</h4><p>We organize five application forms by their interfaces, review benchmarks and resources, and lay out open problems.</p></div>
+      <div class="card reveal"><div class="no">03</div><h4>Harness ✕ Optimization</h4><p>We classify existing work through the complementary lenses of externalized harnesses and internalized optimization.</p></div>
+      <div class="card reveal"><div class="no">04</div><h4>Applications &amp; Frontiers</h4><p>We organize five application forms by their interfaces, review benchmarks and resources, and lay out open problems.</p></div>
     </div>
   </div>
 </section>
@@ -424,7 +419,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">1</span> Foundations</div>
-      <h2 class="sec-title">Three levels of tasks &amp; capabilities</h2>
+      <h2 class="sec-title">Three levels of long-horizon tasks &amp; capabilities</h2>
       <p class="sec-sub">Long-horizon difficulty is a structural property, not a matter of clock time. We organize it along nested task levels <b>H1 ⊂ H2 ⊂ H3</b>, each requiring a matching capability tier <b>C1 ⊂ C2 ⊂ C3</b>.</p>
     </div>
     <div class="figure reveal">
@@ -573,13 +568,100 @@
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="logos"><img src="images/logo.png" alt="Affiliated institutions" loading="lazy" decoding="async"></div>
+    <div class="logos"><img src="images/logo.png?v=2" alt="Long-Horizon Agents logo" loading="lazy" decoding="async"></div>
     <p>Correspondence: <a href="mailto:dongguanting@ruc.edu.cn">dongguanting@ruc.edu.cn</a> · <a href="mailto:dou@ruc.edu.cn">dou@ruc.edu.cn</a></p>
     <p style="margin-top:6px">Reading list: <a href="https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents" target="_blank" rel="noopener">RUC-NLPIR/Awesome-Long-Horizon-Agents</a></p>
   </div>
 </footer>
 
 <script>
+  (function(){
+    if(!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+    var canvas=document.querySelector('.cursor-comet');
+    var context=canvas.getContext('2d');
+    var currentX=0,currentY=0,targetX=0,targetY=0,frame=0,started=false,inside=false,active=false;
+    var trail=[],sparks=[],burstTick=0;
+    function resizeCanvas(){
+      var ratio=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=Math.round(innerWidth*ratio);canvas.height=Math.round(innerHeight*ratio);
+      context.setTransform(ratio,0,0,ratio,0,0);
+    }
+    function requestDraw(){if(!frame)frame=requestAnimationFrame(drawComet)}
+    function glow(x,y,radius,inner,outer){
+      var gradient=context.createRadialGradient(x,y,0,x,y,radius);
+      gradient.addColorStop(0,inner);gradient.addColorStop(.3,outer);gradient.addColorStop(1,'rgba(47,95,224,0)');
+      context.fillStyle=gradient;context.beginPath();context.arc(x,y,radius,0,Math.PI*2);context.fill();
+    }
+    function drawComet(){
+      frame=0;
+      var dx=targetX-currentX,dy=targetY-currentY,speed=Math.hypot(dx,dy),moving=speed>.18;
+      currentX+=dx*.24;currentY+=dy*.24;
+      if(inside&&moving){
+        trail.unshift({x:currentX,y:currentY,life:1,size:2.2+Math.random()*2.4,wobble:(Math.random()-.5)*5});
+        if(trail.length>34)trail.length=34;
+        burstTick++;
+        if(speed>7&&burstTick%3===0){
+          var direction=Math.atan2(dy,dx)+Math.PI;
+          var amount=Math.min(7,3+Math.floor(speed/22));
+          for(var i=0;i<amount;i++){
+            var angle=direction+(Math.random()-.5)*2.2;
+            var force=1.2+Math.random()*Math.min(5.5,1.8+speed*.045);
+            sparks.push({
+              x:currentX-dx*.025+(Math.random()-.5)*6,
+              y:currentY-dy*.025+(Math.random()-.5)*6,
+              vx:Math.cos(angle)*force,
+              vy:Math.sin(angle)*force,
+              life:.72+Math.random()*.28,
+              size:1.1+Math.random()*2.2
+            });
+          }
+          if(sparks.length>90)sparks.splice(0,sparks.length-90);
+        }
+      }
+      trail.forEach(function(point,index){point.life*=moving?.955:.91;point.y+=point.wobble*.018;point.size*=.994});
+      trail=trail.filter(function(point,index){return point.life>.035&&index<34});
+      sparks.forEach(function(spark){
+        spark.x+=spark.vx;spark.y+=spark.vy;spark.vx*=.94;spark.vy*=.94;spark.life*=.89;spark.size*=.985;
+      });
+      sparks=sparks.filter(function(spark){return spark.life>.035});
+      context.clearRect(0,0,innerWidth,innerHeight);
+      context.save();context.globalCompositeOperation='lighter';
+      if(trail.length>1){
+        var last=trail[trail.length-1];
+        var streak=context.createLinearGradient(currentX,currentY,last.x+.01,last.y+.01);
+        streak.addColorStop(0,'rgba(91,141,239,.72)');streak.addColorStop(.45,'rgba(47,95,224,.28)');streak.addColorStop(1,'rgba(30,58,138,0)');
+        context.strokeStyle=streak;context.lineWidth=active?5:3.5;context.lineCap='round';context.lineJoin='round';
+        context.beginPath();context.moveTo(currentX,currentY);
+        trail.forEach(function(point,index){if(index%2===0)context.lineTo(point.x,point.y)});context.stroke();
+      }
+      trail.forEach(function(point,index){
+        context.globalAlpha=point.life*(1-index/trail.length)*.72;
+        glow(point.x,point.y,point.size*3,'rgba(138,181,255,.85)','rgba(47,95,224,.24)');
+      });
+      sparks.forEach(function(spark){
+        context.globalAlpha=spark.life*.9;
+        glow(spark.x,spark.y,spark.size*3.8,'rgba(255,255,255,.96)','rgba(91,141,239,.34)');
+        context.fillStyle='rgba(47,95,224,'+Math.min(.9,spark.life)+')';
+        context.beginPath();context.arc(spark.x,spark.y,Math.max(.55,spark.size*.52),0,Math.PI*2);context.fill();
+      });
+      context.globalAlpha=inside?1:.45;
+      glow(currentX,currentY,active?25:20,'rgba(255,255,255,.98)','rgba(91,141,239,.48)');
+      glow(currentX,currentY,active?10:8,'rgba(255,255,255,1)','rgba(47,95,224,.88)');
+      context.restore();
+      if(moving||trail.length>1||sparks.length)requestDraw();
+    }
+    resizeCanvas();window.addEventListener('resize',function(){resizeCanvas();requestDraw()},{passive:true});
+    document.addEventListener('pointermove',function(event){
+      targetX=event.clientX;targetY=event.clientY;
+      if(!started){currentX=targetX;currentY=targetY;started=true}
+      inside=true;canvas.classList.add('visible');requestDraw();
+    },{passive:true});
+    document.addEventListener('pointerover',function(event){
+      active=!!event.target.closest('a,button,.card,.blurb,.stage,.figure');requestDraw();
+    },{passive:true});
+    document.documentElement.addEventListener('mouseleave',function(){inside=false;canvas.classList.remove('visible');requestDraw()});
+    document.documentElement.addEventListener('mouseenter',function(){inside=true;if(started){canvas.classList.add('visible');requestDraw()}});
+  })();
   function toggleMenu(button){
     var menu=document.getElementById('nl');
     var isOpen=menu.classList.toggle('open');
