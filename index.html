@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Toward Long-Horizon AI Agents: A Survey</title>
+<title>Towards Long-Horizon AI Agents</title>
 <meta name="description" content="A survey framing long-horizon agency as the co-evolution of an externalized harness and an internalized optimization, organized around six perspectives: Foundations, Evolution, Harnesses, Optimization, Applications, and Frontiers.">
+<link rel="icon" type="image/png" href="images/logo_transparent.png">
+<link rel="apple-touch-icon" href="images/logo_transparent.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500&amp;family=Sora:wght@600;700;800&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#f6f8fc;
@@ -38,9 +40,12 @@
   }
   a{color:var(--brand);text-decoration:none}
   a:hover{text-decoration:underline}
+  a:focus-visible,button:focus-visible{outline:3px solid rgba(47,95,224,.28);outline-offset:3px}
   img{max-width:100%;display:block}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
   h1,h2,h3,.sec-title,.title{font-family:"Sora","Inter",sans-serif}
+  .skip-link{position:fixed;left:16px;top:12px;z-index:999;transform:translateY(-150%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:9px;font-weight:700;transition:transform .15s}
+  .skip-link:focus{transform:none;text-decoration:none}
 
   /* ---------- NAV ---------- */
   nav{
@@ -50,11 +55,13 @@
   }
   .nav-in{max-width:var(--maxw);margin:0 auto;padding:11px 24px;display:flex;align-items:center;gap:16px}
   .nav-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.01em;white-space:nowrap;font-family:"Sora",sans-serif}
-  .nav-brand .dot{width:24px;height:24px;border-radius:8px;background:var(--grad);flex:0 0 auto;box-shadow:0 4px 12px rgba(47,95,224,.4)}
+  .nav-brand,.nav-brand:hover{color:var(--ink);text-decoration:none}
+  .nav-brand .dot{width:28px;height:28px;border-radius:9px;background:#ECF5FE;flex:0 0 auto;box-shadow:0 4px 12px rgba(47,95,224,.22);display:grid;place-items:center;overflow:hidden;padding:2px}
+  .nav-brand .dot img{width:100%;height:100%;object-fit:contain}
   .nav-links{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
   .nav-links a{color:var(--muted);font-weight:600;font-size:13.5px;padding:7px 12px;border-radius:9px;transition:.15s}
   .nav-links a:hover{color:var(--ink);background:var(--brand-soft);text-decoration:none}
-  .nav-toggle{display:none}
+  .nav-toggle{display:none;color:var(--ink)}
 
   /* ---------- HERO ---------- */
   header.hero{
@@ -121,6 +128,9 @@
   .authors sup{color:var(--brand);font-weight:700}
   .affil{max-width:82ch;margin:6px auto 0;font-size:12.5px;color:var(--muted)}
   .affil sup{color:var(--brand);font-weight:700}
+  .seals{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin:20px auto 0}
+  .seals img{width:58px;height:58px;display:block;object-fit:contain;transition:transform .18s ease,filter .18s ease}
+  .seals img:hover{transform:translateY(-2px);filter:drop-shadow(0 6px 8px rgba(30,58,138,.14))}
   .contrib{font-size:12px;color:var(--muted);margin-top:6px}
 
   .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:32px 0 6px}
@@ -131,6 +141,7 @@
     background:var(--surface);color:var(--ink);transition:.16s;box-shadow:var(--shadow-sm);
   }
   .btn:hover{transform:translateY(-2px);text-decoration:none;box-shadow:var(--shadow-md);border-color:#c9d6f2}
+  .btn[aria-disabled="true"]{cursor:not-allowed}
   .btn.primary{background:var(--grad-soft);border-color:transparent;color:#fff;box-shadow:0 10px 28px rgba(47,95,224,.28)}
   .btn.primary:hover{box-shadow:0 14px 36px rgba(47,95,224,.38)}
   .btn.primary::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
@@ -138,21 +149,8 @@
   .btn.primary:hover::after{left:140%}
   .btn svg{width:17px;height:17px}
 
-  .stats{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:40px auto 0;max-width:920px}
-  .stat{
-    position:relative;overflow:hidden;
-    background:var(--surface);border:1px solid var(--line);border-radius:16px;
-    padding:16px 24px;min-width:158px;box-shadow:var(--shadow-sm);transition:.2s
-  }
-  .stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);opacity:0;transition:.2s}
-  .stat:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
-  .stat:hover::before{opacity:1}
-  .stat .num{font-size:25px;font-weight:800;letter-spacing:-.02em;font-family:"Sora",sans-serif;
-    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat .lbl{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px}
-
   /* ---------- SECTIONS ---------- */
-  section{padding:74px 0;position:relative}
+  section{padding:80px 0;position:relative}
   .band{background:
       radial-gradient(60% 100% at 100% 0%, rgba(30,58,138,.05), transparent 60%),
       radial-gradient(60% 100% at 0% 100%, rgba(47,95,224,.05), transparent 60%),
@@ -187,6 +185,9 @@
 
   .prose{max-width:80ch;margin:0 auto;font-size:17px;color:#2b3350}
   .prose p{margin:0 0 16px}.prose b{color:var(--ink)}
+  .overview-intro{max-width:80ch;margin:54px auto 20px;text-align:center}
+  .overview-intro h3{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.02em;margin:0 0 22px}
+  .overview-intro .prose{text-align:left}
 
   /* contribution cards */
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:18px;margin-top:40px}
@@ -213,6 +214,15 @@
   .c-h1{background:var(--brand)} .c-h2{background:var(--brand-2)} .c-h3{background:var(--brand-3)} .c-acc{background:var(--accent)}
 
   .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+  .harness-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .harness-grid .chip{background:var(--brand)}
+  .applications-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .applications-grid .blurb{padding:20px 18px;display:flex;flex-direction:column;min-width:0}
+  .applications-grid .blurb:hover{transform:translateY(-4px)}
+  .applications-grid .blurb h5{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:start;gap:10px;font-size:15px;line-height:1.35;min-height:44px;margin-bottom:12px}
+  .applications-grid .app-title{display:block;padding-top:3px}
+  .applications-grid .chip{width:42px;height:32px;padding:0;background:var(--brand);border-radius:9px;font-size:12.5px}
+  .applications-grid .blurb p{font-size:13.5px;line-height:1.7;margin:0}
 
   /* evolution stages */
   .stages{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -259,11 +269,42 @@
   }
   @media (max-width:860px){
     .stages{grid-template-columns:1fr}.pillars{grid-template-columns:1fr}
-    .nav-links{display:none;position:absolute;top:58px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--line);flex-direction:column;padding:8px 16px 14px;box-shadow:var(--shadow-md)}
+    .harness-grid,.applications-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);flex-direction:column;padding:10px 20px 16px;box-shadow:var(--shadow-md);backdrop-filter:blur(16px)}
     .nav-links.open{display:flex}
-    .nav-toggle{display:inline-flex;margin-left:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 11px;cursor:pointer;font-size:16px}
+    .nav-toggle{display:inline-grid;place-items:center;margin-left:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;width:38px;height:38px;padding:0;cursor:pointer;font-size:18px}
+  }
+  @media (max-width:600px){
+    .wrap{padding:0 18px}
+    .nav-in{padding:10px 18px}
+    .nav-brand{font-size:14px;gap:8px}
+    header.hero{padding:72px 0 56px}
+    .eyebrow{margin-bottom:20px}
+    h1.title{font-size:clamp(36px,12vw,52px)}
+    .subtitle{margin-bottom:24px}
+    .authors{font-size:13.5px;line-height:1.75}
+    .affil{font-size:12px;line-height:1.8}
+    .btns{margin-top:26px;gap:10px}
+    .btn{width:100%;max-width:310px;justify-content:center}
+    .seals{gap:12px;margin-top:18px}
+    .seals img{width:48px;height:48px}
+    section{padding:62px 0}
+    .sec-head{margin-bottom:34px}
+    .sec-sub{font-size:15px}
+    .figure{padding:10px;border-radius:16px}
+    .figcap{font-size:12.5px;margin-top:12px;padding:0 4px}
+    .prose{font-size:16px}
+    .overview-intro{margin-top:40px;text-align:left}
+    .card,.stage,.pillar{padding:20px}
+    .harness-grid,.applications-grid{grid-template-columns:1fr}
+    .applications-grid .blurb{padding:17px 19px}
+    .applications-grid .blurb h5{font-size:15.5px;gap:9px;min-height:0}
+    .applications-grid .blurb p{font-size:14px}
+    pre.bib{padding:18px;font-size:12px}
   }
   @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
     .reveal{opacity:1;transform:none}
     .hero .blob,.hero-aurora{animation:none}
     h1.title .g{animation:none}
@@ -272,44 +313,44 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 <!-- NAV -->
-<nav>
+<nav aria-label="Primary navigation">
   <div class="nav-in">
-    <div class="nav-brand"><span class="dot"></span> Long-Horizon Agents</div>
-    <button class="nav-toggle" aria-label="menu" onclick="document.getElementById('nl').classList.toggle('open')">☰</button>
+    <a class="nav-brand" href="#top" aria-label="Long-Horizon Agents — back to top"><span class="dot"><img src="images/logo_transparent.png" alt="" fetchpriority="high"></span> Long-Horizon Agents</a>
+    <button class="nav-toggle" type="button" aria-label="Open navigation menu" aria-controls="nl" aria-expanded="false" onclick="toggleMenu(this)">☰</button>
     <div class="nav-links" id="nl">
+      <a href="#frontiers">Landscape</a>
       <a href="#overview">Overview</a>
       <a href="#foundations">Foundations</a>
       <a href="#evolution">Evolution</a>
       <a href="#harnesses">Harnesses</a>
       <a href="#optimization">Optimization</a>
       <a href="#applications">Applications</a>
-      <a href="#frontiers">Frontiers</a>
       <a href="#cite">Cite</a>
     </div>
   </div>
 </nav>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero" id="top">
   <div class="hero-aurora"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <div class="wrap hero-inner">
     <span class="eyebrow"><span class="pulse"></span> Survey · 2026</span>
-    <h1 class="title">Toward <span class="g">Long-Horizon</span> AI Agents</h1>
-    <p class="subtitle">Foundations, Evolution, Harnesses, Optimization, Applications, and Frontiers — framing long-horizon agency as the <b>co-evolution of an externalized harness and an internalized optimization</b>.</p>
-
+    <h1 class="title">Towards <span class="g">Long-Horizon</span> AI Agents</h1>
+    <p class="subtitle">Foundation, Evolution, Harness, Optimization, Application, and Frontier</p>
     <p class="authors">
-      <a href="https://scholar.google.com/citations?user=amozZDkAAAAJ" target="_blank" rel="noopener">Guanting Dong</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=0QqMGUQAAAAJ" target="_blank" rel="noopener">Xiaoshuai Song</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=_t-3ipgAAAAJ" target="_blank" rel="noopener">Yuyang Hu</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=iHCuEo8AAAAJ" target="_blank" rel="noopener">Jiajie Jin</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=q4CnV3oAAAAJ" target="_blank" rel="noopener">Chenghao Zhang</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=nq_-2vUAAAAJ" target="_blank" rel="noopener">Yifei Chen</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=XDljV4YAAAAJ" target="_blank" rel="noopener">Xiaoxi Li</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=3Q9nWMgAAAAJ" target="_blank" rel="noopener">Huaying Yuan</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=CF_NOtoAAAAJ" target="_blank" rel="noopener">Xinyu Yang</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=rm14OmsAAAAJ" target="_blank" rel="noopener">Tongyu Wen</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=qHzX-cMAAAAJ" target="_blank" rel="noopener">Jiejun Tan</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=u9uPuxsAAAAJ" target="_blank" rel="noopener">Hongjin Qian</a><sup>3</sup>, <a href="https://scholar.google.com/citations?user=C0Xc3dYAAAAJ" target="_blank" rel="noopener">Shijue Huang</a><sup>5</sup>, <a href="https://scholar.google.com/citations?user=ZyvZWYYAAAAJ" target="_blank" rel="noopener">Junting Lu</a><sup>3</sup>, <a href="https://scholar.google.com/citations?user=v0IDKw4AAAAJ" target="_blank" rel="noopener">Zhenyu Li</a><sup>4</sup>, <a href="https://scholar.google.com/citations?user=FGIZfyQAAAAJ" target="_blank" rel="noopener">Wanjun Zhong</a><sup>6</sup>, <a href="https://scholar.google.com/citations?user=tBqVOWsAAAAJ" target="_blank" rel="noopener">Yutao Zhu</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=Z9DWCBEAAAAJ" target="_blank" rel="noopener">Tat-Seng Chua</a><sup>2</sup>, <a href="https://scholar.google.com/citations?user=ChCjAAwAAAAJ" target="_blank" rel="noopener">Zhicheng Dou</a><sup>1,†</sup>, <a href="https://scholar.google.com/citations?user=tbxCHJgAAAAJ" target="_blank" rel="noopener">Ji-Rong Wen</a><sup>1</sup>
+      <a href="https://scholar.google.com/citations?user=amozZDkAAAAJ" target="_blank" rel="noopener">Guanting Dong</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=0QqMGUQAAAAJ" target="_blank" rel="noopener">Xiaoshuai Song</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=_t-3ipgAAAAJ" target="_blank" rel="noopener">Yuyang Hu</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=iHCuEo8AAAAJ" target="_blank" rel="noopener">Jiajie Jin</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=q4CnV3oAAAAJ" target="_blank" rel="noopener">Chenghao Zhang</a><sup>1,∗</sup>, <a href="https://scholar.google.com/citations?user=nq_-2vUAAAAJ" target="_blank" rel="noopener">Yifei Chen</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=XDljV4YAAAAJ" target="_blank" rel="noopener">Xiaoxi Li</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=3Q9nWMgAAAAJ" target="_blank" rel="noopener">Huaying Yuan</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=CF_NOtoAAAAJ" target="_blank" rel="noopener">Xinyu Yang</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=rm14OmsAAAAJ" target="_blank" rel="noopener">Tongyu Wen</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=qHzX-cMAAAAJ" target="_blank" rel="noopener">Jiejun Tan</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=u9uPuxsAAAAJ" target="_blank" rel="noopener">Hongjin Qian</a><sup>2</sup>, <a href="https://scholar.google.com/citations?user=C0Xc3dYAAAAJ" target="_blank" rel="noopener">Shijue Huang</a><sup>5</sup>, <a href="https://scholar.google.com/citations?user=ZyvZWYYAAAAJ" target="_blank" rel="noopener">Junting Lu</a><sup>2</sup>, <a href="https://scholar.google.com/citations?user=v0IDKw4AAAAJ" target="_blank" rel="noopener">Zhenyu Li</a><sup>3</sup>, <a href="https://scholar.google.com/citations?user=FGIZfyQAAAAJ" target="_blank" rel="noopener">Wanjun Zhong</a><sup>4</sup>, <a href="https://scholar.google.com/citations?user=tBqVOWsAAAAJ" target="_blank" rel="noopener">Yutao Zhu</a><sup>1</sup>, <a href="https://scholar.google.com/citations?user=Z9DWCBEAAAAJ" target="_blank" rel="noopener">Tat-Seng Chua</a><sup>6</sup>, <a href="https://scholar.google.com/citations?user=ChCjAAwAAAAJ" target="_blank" rel="noopener">Zhicheng Dou</a><sup>1,†</sup>, <a href="https://scholar.google.com/citations?user=tbxCHJgAAAAJ" target="_blank" rel="noopener">Ji-Rong Wen</a><sup>1</sup>
     </p>
     <p class="affil">
-      <sup>1</sup>Renmin University of China · <sup>2</sup>National University of Singapore · <sup>3</sup>Peking University · <sup>4</sup>Tsinghua University · <sup>5</sup>HKUST · <sup>6</sup>Sun Yat-sen University
+      <sup>1</sup>Renmin University of China · <sup>2</sup>Peking University · <sup>3</sup>Tsinghua University · <sup>4</sup>Sun Yat-sen University · <sup>5</sup>HKUST · <sup>6</sup>National University of Singapore
     </p>
     <p class="contrib">∗ Core Contributors &nbsp;·&nbsp; † Corresponding author</p>
 
     <div class="btns">
-      <a class="btn primary" href="#" onclick="return false;">
+      <a class="btn primary" href="#" aria-disabled="true" title="Paper link coming soon" onclick="return false;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg>
         Paper (PDF)
       </a>
@@ -322,15 +363,33 @@
         BibTeX
       </a>
     </div>
-
-    <div class="stats">
-      <div class="stat"><div class="num">6</div><div class="lbl">Connected perspectives</div></div>
-      <div class="stat"><div class="num">9s → 16h+</div><div class="lbl">Task horizon, GPT-3 → 2026</div></div>
-      <div class="stat"><div class="num">~7 mo</div><div class="lbl">Horizon doubling time</div></div>
-      <div class="stat"><div class="num">H1⊂H2⊂H3</div><div class="lbl">Task / capability levels</div></div>
+    <div class="seals" aria-label="Affiliated institutions">
+      <img src="images/seals/Renmin_University_of_China_logo.svg" alt="Renmin University of China seal" title="1. Renmin University of China">
+      <img src="images/seals/Peking_University.svg" alt="Peking University seal" title="2. Peking University">
+      <img src="images/seals/Tsinghua_University_Logo.svg" alt="Tsinghua University seal" title="3. Tsinghua University">
+      <img src="images/seals/Sun_Yat-sen_University_Logo.svg" alt="Sun Yat-sen University seal" title="4. Sun Yat-sen University">
+      <img src="images/seals/HKUST.svg" alt="HKUST seal" title="5. HKUST">
+      <img src="images/seals/NUS.svg" alt="National University of Singapore seal" title="6. National University of Singapore">
     </div>
+
   </div>
 </header>
+
+<main id="main-content">
+<!-- FRONTIERS -->
+<section id="frontiers" class="band">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-kicker"><span class="badge">◇</span> Landscape</div>
+      <h2 class="sec-title">The landscape &amp; open problems</h2>
+      <p class="sec-sub">Reliable long-horizon agency is a system property to be engineered and learned — not a byproduct of the base model alone. Much of the roadmap remains open.</p>
+    </div>
+    <div class="figure reveal">
+      <img src="images/landscape.png" alt="The overall landscape of long-horizon agents" decoding="async" fetchpriority="high">
+      <p class="figcap"><b>Figure 9.</b> The overall landscape: harness engineering and model optimization co-evolve, with experience traces carrying capability between them.</p>
+    </div>
+  </div>
+</section>
 
 <!-- OVERVIEW -->
 <section id="overview">
@@ -341,22 +400,15 @@
       <p class="sec-sub">The task-completion horizon of frontier agents has climbed from seconds to well over twelve hours, roughly doubling every seven months. Long-horizon agency is fast becoming the central bottleneck for practical agent intelligence.</p>
     </div>
     <div class="figure reveal">
-      <img src="images/abstract.png" alt="Time-horizon growth of frontier AI agents, climbing a mountain from GPT-3 (9s) to Claude Mythos (16h+)">
+      <img src="images/abstract.png" alt="Time-horizon growth of frontier AI agents, climbing a mountain from GPT-3 (9s) to Claude Mythos (16h+)" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 1.</b> The empirical time-horizon trend of frontier agents: median human-equivalent task duration at 50% success on software-engineering-style tasks (source: <a href="https://metr.org/time-horizons" target="_blank" rel="noopener">metr.org/time-horizons</a>).</p>
     </div>
-  </div>
-</section>
-
-<!-- ABSTRACT -->
-<section id="abstract" class="band">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sec-kicker"><span class="badge">§</span> Abstract</div>
-      <h2 class="sec-title">A unified landscape for long-horizon agents</h2>
-    </div>
-    <div class="prose reveal">
-      <p>With the rapid advancement of LLM capabilities, expectations for AI agents are shifting from solving simple, single-turn tasks toward carrying out <b>long-horizon tasks</b> in the real world. We refer to such systems as long-horizon agents: agents that plan over extended horizons, interact with real-world environments, recover from their own mistakes, and adapt their strategies during execution.</p>
-      <p>Despite this progress, the field still lacks a shared definition and taxonomy. This paper offers a unified landscape by framing long-horizon agency as the <b>co-evolution of an externalized harness and an internalized optimization</b>, and organizes the survey around six connected perspectives.</p>
+    <div class="overview-intro reveal">
+      <h3>A unified landscape for long-horizon agents</h3>
+      <div class="prose">
+        <p>With the rapid advancement of LLM capabilities, expectations for AI agents are shifting from solving simple, single-turn tasks toward carrying out <b>long-horizon tasks</b> in the real world. We refer to such systems as long-horizon agents: agents that plan over extended horizons, interact with real-world environments, recover from their own mistakes, and adapt their strategies during execution.</p>
+        <p>Despite this progress, the field still lacks a shared definition and taxonomy. This paper offers a unified landscape by framing long-horizon agency as the <b>co-evolution of an externalized harness and an internalized optimization</b>, and organizes the survey around six connected perspectives.</p>
+      </div>
     </div>
     <div class="cards">
       <div class="card reveal"><div class="no">01</div><h4>Formalization</h4><p>We formalize long-horizon agency as a harness-coupled decision process and distinguish it from long-running execution, autonomy, and self-evolution.</p></div>
@@ -368,7 +420,7 @@
 </section>
 
 <!-- FOUNDATIONS -->
-<section id="foundations">
+<section id="foundations" class="band">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">1</span> Foundations</div>
@@ -376,7 +428,7 @@
       <p class="sec-sub">Long-horizon difficulty is a structural property, not a matter of clock time. We organize it along nested task levels <b>H1 ⊂ H2 ⊂ H3</b>, each requiring a matching capability tier <b>C1 ⊂ C2 ⊂ C3</b>.</p>
     </div>
     <div class="figure reveal">
-      <img src="images/three_levels.png" alt="Three levels of long-horizon tasks and capabilities: H1/H2/H3 paired with C1/C2/C3">
+      <img src="images/three_levels.png" alt="Three levels of long-horizon tasks and capabilities: H1/H2/H3 paired with C1/C2/C3" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 2.</b> Longer reach, stronger capability — each task level induces the capability it requires.</p>
     </div>
     <div class="grid3" style="margin-top:28px">
@@ -388,7 +440,7 @@
 </section>
 
 <!-- EVOLUTION -->
-<section id="evolution" class="band">
+<section id="evolution">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">2</span> Evolution</div>
@@ -401,14 +453,14 @@
       <div class="stage reveal"><span class="bar"></span><span class="rn">III</span><div class="yr">2025 – present</div><h4>Runtime Harnesses</h4><p>The unit of control becomes the whole trajectory: a model coupled to a runtime that sustains one goal over many dependent steps.</p></div>
     </div>
     <div class="figure reveal" style="margin-top:28px">
-      <img src="images/evolution.png" alt="The co-evolution of long-horizon agents across three stages">
+      <img src="images/evolution.png" alt="The co-evolution of long-horizon agents across three stages" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 3.</b> Control widens from a single prompt, to the context of each step, to the whole trajectory — with capability progressively internalized into model weights at every stage.</p>
     </div>
   </div>
 </section>
 
 <!-- HARNESSES -->
-<section id="harnesses">
+<section id="harnesses" class="band">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">3</span> Harnesses · Pillar I</div>
@@ -416,10 +468,10 @@
       <p class="sec-sub">The harness is what turns a capable model into a reliable long-horizon agent. We organize it into six components that recur across essentially every contemporary agent.</p>
     </div>
     <div class="figure reveal">
-      <img src="images/exter_main.png" alt="The agent harness by component: loops, context and memory, tools, orchestration, hooks, verification">
+      <img src="images/exter_main.png" alt="The agent harness by component: loops, context and memory, tools, orchestration, hooks, verification" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 4.</b> The six harness components (Pillar I), from the inner control loop outward, wrapped by the agent's operating cycle: set goal → plan → execute → reflect → recover → deliver.</p>
     </div>
-    <div class="grid3" style="margin-top:28px">
+    <div class="grid3 harness-grid" style="margin-top:28px">
       <div class="blurb reveal"><h5><span class="chip c-h1">1</span> Loops &amp; Workflows</h5><p>Schedule model calls, actions, and feedback: linear, plan–execute, and branching search.</p></div>
       <div class="blurb reveal"><h5><span class="chip c-h2">2</span> Context &amp; Memory</h5><p>Bound in-run state and persist what must survive across windows: working, factual, experiential memory.</p></div>
       <div class="blurb reveal"><h5><span class="chip c-acc">3</span> Tools, MCP &amp; Skills</h5><p>Interface model decisions with external capabilities: interfaces, discovery, and skill libraries.</p></div>
@@ -429,7 +481,7 @@
     </div>
 
     <div class="split rev reveal" style="margin-top:36px">
-      <div class="figure"><img src="images/orchestration.png" alt="Overview of agent orchestration"><p class="figcap"><b>Figure 5.</b> Orchestration: tasks decomposed into roles, coordinated through topologies, optimized via routing, integrated through protocols.</p></div>
+      <div class="figure"><img src="images/orchestration.png" alt="Overview of agent orchestration" loading="lazy" decoding="async"><p class="figcap"><b>Figure 5.</b> Orchestration: tasks decomposed into roles, coordinated through topologies, optimized via routing, integrated through protocols.</p></div>
       <div class="blurbs">
         <div class="blurb"><h5>Decomposition &amp; Roles</h5><p>How a long task is split and assigned — statically fixed or dynamically revised from feedback.</p></div>
         <div class="blurb"><h5>Coordination Topologies</h5><p>Centralized hubs, decentralized peer debate, hierarchical forms; the DAG is the dominant abstraction.</p></div>
@@ -438,7 +490,7 @@
     </div>
 
     <div class="split fwd reveal" style="margin-top:26px">
-      <div class="figure"><img src="images/hooks_and_middleware.png" alt="Overview of hooks"><p class="figcap"><b>Figure 6.</b> Hooks by the origin and timing of the trigger: pre-defined rule-based, custom user-defined, runtime-adaptive.</p></div>
+      <div class="figure"><img src="images/hooks_and_middleware.png" alt="Overview of hooks" loading="lazy" decoding="async"><p class="figcap"><b>Figure 6.</b> Hooks by the origin and timing of the trigger: pre-defined rule-based, custom user-defined, runtime-adaptive.</p></div>
       <div class="blurbs">
         <div class="blurb"><h5>Rule-based</h5><p>Immutable, hard-coded invariants at the input, tool-call, and protocol boundaries.</p></div>
         <div class="blurb"><h5>User-defined</h5><p>Domain-specific policies: symbolic, static LLM-compiled, or dynamic LLM-evaluated.</p></div>
@@ -449,7 +501,7 @@
 </section>
 
 <!-- OPTIMIZATION -->
-<section id="optimization" class="band">
+<section id="optimization">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">4</span> Optimization · Pillar II</div>
@@ -457,7 +509,7 @@
       <p class="sec-sub">What the harness supplies from outside is progressively absorbed into model weights — through architecture, data, training, reinforcement learning, distillation, and self-evolution.</p>
     </div>
     <div class="figure reveal">
-      <img src="images/inter_main.png" alt="The internalized optimization pipeline from architectural substrate to self-evolution">
+      <img src="images/inter_main.png" alt="The internalized optimization pipeline from architectural substrate to self-evolution" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 7.</b> The Pillar II pipeline: an architectural substrate feeds data &amp; environment synthesis, pre/mid-training, fine-tuning, agentic RL, and on-policy distillation, closed by a self-evolution loop.</p>
     </div>
     <div class="cards" style="margin-top:30px">
@@ -470,38 +522,23 @@
 </section>
 
 <!-- APPLICATIONS -->
-<section id="applications">
+<section id="applications" class="band">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-kicker"><span class="badge">5</span> Applications</div>
       <h2 class="sec-title">Five application forms, organized by interface</h2>
       <p class="sec-sub">Long-horizon agents materialize across five interface-defined domains, each with its own harness demands and benchmarks.</p>
     </div>
-    <div class="grid3">
-      <div class="blurb reveal"><h5><span class="chip c-h1">SE</span> Software Engineering</h5><p>Repository-scale coding over files, tests, and terminals — the proving ground for durable multi-step execution.</p></div>
-      <div class="blurb reveal"><h5><span class="chip c-h2">IS</span> Information Seeking</h5><p>Deep research pipelines that interleave planning, retrieval, and writing across many sources.</p></div>
-      <div class="blurb reveal"><h5><span class="chip c-h3">CU</span> Computer Use</h5><p>GUI-facing control of desktops and browsers, grounding actions in live interface state.</p></div>
-      <div class="blurb reveal"><h5><span class="chip c-acc">MM</span> Multimodal Agents</h5><p>Vision–language control that couples perception with long-horizon action.</p></div>
-      <div class="blurb reveal"><h5><span class="chip c-h1">GP</span> General-Purpose</h5><p>Personal and general assistants that carry consequential work across tools and sessions.</p></div>
+    <div class="grid3 applications-grid">
+      <div class="blurb reveal"><h5><span class="chip">SE</span><span class="app-title">Software Engineering</span></h5><p>Repository-scale coding over files, tests, and terminals — the proving ground for durable multi-step execution.</p></div>
+      <div class="blurb reveal"><h5><span class="chip">IS</span><span class="app-title">Information Seeking</span></h5><p>Deep research pipelines that interleave planning, retrieval, and writing across many sources.</p></div>
+      <div class="blurb reveal"><h5><span class="chip">CU</span><span class="app-title">Computer Use</span></h5><p>GUI-facing control of desktops and browsers, grounding actions in live interface state.</p></div>
+      <div class="blurb reveal"><h5><span class="chip">MM</span><span class="app-title">Multimodal Agents</span></h5><p>Vision–language control that couples perception with long-horizon action.</p></div>
+      <div class="blurb reveal"><h5><span class="chip">GP</span><span class="app-title">General-Purpose</span></h5><p>Personal and general assistants that carry consequential work across tools and sessions.</p></div>
     </div>
     <div class="figure reveal" style="margin-top:30px">
-      <img src="images/harness_domain.png" alt="Harness across application domains">
+      <img src="images/harness_domain.png" alt="Harness across application domains" loading="lazy" decoding="async">
       <p class="figcap"><b>Figure 8.</b> How harness components specialize across application domains and their benchmarks.</p>
-    </div>
-  </div>
-</section>
-
-<!-- FRONTIERS -->
-<section id="frontiers" class="band">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sec-kicker"><span class="badge">6</span> Frontiers</div>
-      <h2 class="sec-title">The landscape &amp; open problems</h2>
-      <p class="sec-sub">Reliable long-horizon agency is a system property to be engineered and learned — not a byproduct of the base model alone. Much of the roadmap remains open.</p>
-    </div>
-    <div class="figure reveal">
-      <img src="images/landscape.png" alt="The overall landscape of long-horizon agents">
-      <p class="figcap"><b>Figure 9.</b> The overall landscape: harness engineering and model optimization co-evolve, with experience traces carrying capability between them.</p>
     </div>
   </div>
 </section>
@@ -519,10 +556,10 @@
         <button class="copybtn" id="cbtn" onclick="copyBib()">Copy BibTeX</button>
       </div>
       <pre class="bib" id="bib"><span class="k">@article</span>{dong2026longhorizon,
-  <span class="k">title</span>   = {<span class="v">Toward Long-Horizon AI Agents: Foundations, Evolution,
+  <span class="k">title</span>   = {<span class="v">Towards Long-Horizon AI Agents: Foundations, Evolution,
              Harnesses, Optimization, Applications, and Frontiers</span>},
   <span class="k">author</span>  = {<span class="v">Dong, Guanting and Song, Xiaoshuai and Hu, Yuyang and
-             Jin, Jiajie and Zhang, Chenghao and Chen, Yifei and others</span>},
+             Jin, Jiajie and Zhang, Chenghao and others</span>},
   <span class="k">journal</span> = {<span class="v">arXiv preprint</span>},
   <span class="k">year</span>    = {<span class="v">2026</span>},
   <span class="k">url</span>     = {<span class="v">https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents</span>}
@@ -531,31 +568,61 @@
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="logos"><img src="images/logo.png" alt="Affiliated institutions"></div>
+    <div class="logos"><img src="images/logo.png" alt="Affiliated institutions" loading="lazy" decoding="async"></div>
     <p>Correspondence: <a href="mailto:dongguanting@ruc.edu.cn">dongguanting@ruc.edu.cn</a> · <a href="mailto:dou@ruc.edu.cn">dou@ruc.edu.cn</a></p>
     <p style="margin-top:6px">Reading list: <a href="https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents" target="_blank" rel="noopener">RUC-NLPIR/Awesome-Long-Horizon-Agents</a></p>
   </div>
 </footer>
 
 <script>
+  function toggleMenu(button){
+    var menu=document.getElementById('nl');
+    var isOpen=menu.classList.toggle('open');
+    button.setAttribute('aria-expanded',String(isOpen));
+    button.setAttribute('aria-label',isOpen?'Close navigation menu':'Open navigation menu');
+  }
+  function closeMenu(){
+    var menu=document.getElementById('nl');
+    var button=document.querySelector('.nav-toggle');
+    menu.classList.remove('open');
+    button.setAttribute('aria-expanded','false');
+    button.setAttribute('aria-label','Open navigation menu');
+  }
+  function showCopyStatus(success){
+    var button=document.getElementById('cbtn');
+    button.classList.toggle('done',success);
+    button.textContent=success?'Copied ✓':'Copy failed';
+    setTimeout(function(){button.classList.remove('done');button.textContent='Copy BibTeX';},1800);
+  }
   function copyBib(){
     var raw=document.getElementById('bib').innerText;
-    navigator.clipboard.writeText(raw).then(function(){
-      var b=document.getElementById('cbtn');b.classList.add('done');b.textContent='Copied ✓';
-      setTimeout(function(){b.classList.remove('done');b.textContent='Copy BibTeX';},1800);
-    });
+    if(navigator.clipboard&&window.isSecureContext){
+      navigator.clipboard.writeText(raw).then(function(){showCopyStatus(true)},function(){showCopyStatus(false)});
+      return;
+    }
+    var area=document.createElement('textarea');
+    area.value=raw;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';
+    document.body.appendChild(area);area.select();
+    try{showCopyStatus(document.execCommand('copy'))}catch(e){showCopyStatus(false)}
+    area.remove();
   }
-  document.querySelectorAll('#nl a').forEach(function(a){a.addEventListener('click',function(){document.getElementById('nl').classList.remove('open')})});
+  document.querySelectorAll('#nl a').forEach(function(a){a.addEventListener('click',closeMenu)});
+  document.addEventListener('keydown',function(event){if(event.key==='Escape')closeMenu()});
   // scroll reveal with stagger
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
-  },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal').forEach(function(el,i){
-    el.style.transitionDelay=(Math.min(i%4,3)*70)+'ms';io.observe(el);
-  });
+  var revealItems=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('in');io.unobserve(entry.target)}});
+    },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+    revealItems.forEach(function(el,i){el.style.transitionDelay=(Math.min(i%4,3)*70)+'ms';io.observe(el)});
+  }else{
+    revealItems.forEach(function(el){el.classList.add('in')});
+  }
 </script>
 </body>
 </html>
