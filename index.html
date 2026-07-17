@@ -567,7 +567,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="wrap">
-    <div class="logos"><img src="images/logo.png?v=2" alt="Long-Horizon Agents logo" loading="lazy" decoding="async"></div>
+    <div class="logos"><img src="images/logo_transparent.png" alt="Long-Horizon Agents logo" loading="lazy" decoding="async"></div>
     <p>Correspondence: <a href="mailto:dongguanting@ruc.edu.cn">dongguanting@ruc.edu.cn</a> · <a href="mailto:dou@ruc.edu.cn">dou@ruc.edu.cn</a></p>
     <p style="margin-top:6px">Reading list: <a href="https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents" target="_blank" rel="noopener">RUC-NLPIR/Awesome-Long-Horizon-Agents</a></p>
   </div>
@@ -579,7 +579,7 @@
     var canvas=document.querySelector('.cursor-comet');
     var context=canvas.getContext('2d');
     var currentX=0,currentY=0,targetX=0,targetY=0,frame=0,started=false,inside=false,active=false;
-    var trail=[],sparks=[],burstTick=0;
+    var trail=[],sparks=[],burstTick=0,lastFrame=0,lastInput=0,lastSample=0;
     function resizeCanvas(){
       var ratio=Math.min(window.devicePixelRatio||1,2);
       canvas.width=Math.round(innerWidth*ratio);canvas.height=Math.round(innerHeight*ratio);
@@ -591,13 +591,17 @@
       gradient.addColorStop(0,inner);gradient.addColorStop(.3,outer);gradient.addColorStop(1,'rgba(47,95,224,0)');
       context.fillStyle=gradient;context.beginPath();context.arc(x,y,radius,0,Math.PI*2);context.fill();
     }
-    function drawComet(){
+    function drawComet(now){
       frame=0;
+      var delta=Math.min(34,lastFrame?now-lastFrame:16.67);lastFrame=now;
       var dx=targetX-currentX,dy=targetY-currentY,speed=Math.hypot(dx,dy),moving=speed>.18;
-      currentX+=dx*.24;currentY+=dy*.24;
-      if(inside&&moving){
-        trail.unshift({x:currentX,y:currentY,life:1,size:2.2+Math.random()*2.4,wobble:(Math.random()-.5)*5});
-        if(trail.length>34)trail.length=34;
+      var follow=1-Math.pow(.76,delta/16.67);
+      currentX+=dx*follow;currentY+=dy*follow;
+      var previous=trail[0],sampleDistance=previous?Math.hypot(currentX-previous.x,currentY-previous.y):Infinity;
+      if(inside&&moving&&(sampleDistance>3.2||now-lastSample>28)){
+        trail.unshift({x:currentX,y:currentY,age:0,life:1,size:2.2+Math.random()*2.4,wobble:(Math.random()-.5)*5});
+        lastSample=now;
+        if(trail.length>48)trail.length=48;
         burstTick++;
         if(speed>7&&burstTick%3===0){
           var direction=Math.atan2(dy,dx)+Math.PI;
@@ -617,10 +621,16 @@
           if(sparks.length>90)sparks.splice(0,sparks.length-90);
         }
       }
-      trail.forEach(function(point,index){point.life*=moving?.955:.91;point.y+=point.wobble*.018;point.size*=.994});
-      trail=trail.filter(function(point,index){return point.life>.035&&index<34});
+      trail.forEach(function(point){
+        point.age+=delta;
+        var remaining=Math.max(0,1-point.age/680);
+        point.life=remaining*remaining*(3-2*remaining);
+        point.y+=point.wobble*.018*(delta/16.67);
+      });
+      trail=trail.filter(function(point){return point.life>.012});
       sparks.forEach(function(spark){
-        spark.x+=spark.vx;spark.y+=spark.vy;spark.vx*=.94;spark.vy*=.94;spark.life*=.89;spark.size*=.985;
+        var step=delta/16.67,drag=Math.pow(.94,step);
+        spark.x+=spark.vx*step;spark.y+=spark.vy*step;spark.vx*=drag;spark.vy*=drag;spark.life*=Math.pow(.89,step);spark.size*=Math.pow(.985,step);
       });
       sparks=sparks.filter(function(spark){return spark.life>.035});
       context.clearRect(0,0,innerWidth,innerHeight);
@@ -629,6 +639,7 @@
         var last=trail[trail.length-1];
         var streak=context.createLinearGradient(currentX,currentY,last.x+.01,last.y+.01);
         streak.addColorStop(0,'rgba(91,141,239,.72)');streak.addColorStop(.45,'rgba(47,95,224,.28)');streak.addColorStop(1,'rgba(30,58,138,0)');
+        context.globalAlpha=Math.min(1,trail[0].life*1.12);
         context.strokeStyle=streak;context.lineWidth=active?5:3.5;context.lineCap='round';context.lineJoin='round';
         context.beginPath();context.moveTo(currentX,currentY);
         trail.forEach(function(point,index){if(index%2===0)context.lineTo(point.x,point.y)});context.stroke();
@@ -643,17 +654,22 @@
         context.fillStyle='rgba(47,95,224,'+Math.min(.9,spark.life)+')';
         context.beginPath();context.arc(spark.x,spark.y,Math.max(.55,spark.size*.52),0,Math.PI*2);context.fill();
       });
-      context.globalAlpha=inside?1:.45;
-      glow(currentX,currentY,active?25:20,'rgba(255,255,255,.98)','rgba(91,141,239,.48)');
-      glow(currentX,currentY,active?10:8,'rgba(255,255,255,1)','rgba(47,95,224,.88)');
+      var idle=now-lastInput;
+      var headAlpha=inside?Math.max(0,Math.min(1,1-(idle-90)/360)):0;
+      if(headAlpha>0){
+        context.globalAlpha=headAlpha;
+        glow(currentX,currentY,active?25:20,'rgba(255,255,255,.98)','rgba(91,141,239,.48)');
+        glow(currentX,currentY,active?10:8,'rgba(255,255,255,1)','rgba(47,95,224,.88)');
+      }
       context.restore();
-      if(moving||trail.length>1||sparks.length)requestDraw();
+      if(moving||trail.length||sparks.length||headAlpha>0){requestDraw()}
+      else{canvas.classList.remove('visible');lastFrame=0}
     }
     resizeCanvas();window.addEventListener('resize',function(){resizeCanvas();requestDraw()},{passive:true});
     document.addEventListener('pointermove',function(event){
       targetX=event.clientX;targetY=event.clientY;
       if(!started){currentX=targetX;currentY=targetY;started=true}
-      inside=true;canvas.classList.add('visible');requestDraw();
+      inside=true;lastInput=performance.now();canvas.classList.add('visible');requestDraw();
     },{passive:true});
     document.addEventListener('pointerover',function(event){
       active=!!event.target.closest('a,button,.card,.blurb,.stage,.figure');requestDraw();
